@@ -13,7 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:#0b0b0b;color:#fff;overflow-x:hidden;position:relative}
 
-/* Fundo */
+/* Fundo animado */
 body::before,body::after{
   content:'';position:fixed;width:600px;height:600px;border-radius:50%;z-index:-1;
 }
@@ -108,18 +108,22 @@ h1,h2{font-family:'Montserrat',sans-serif;color:#ff1f1f}
   .text h1{font-size:2.2rem}
   .text h2{font-size:1.8rem}
   .text p{font-size:1rem;line-height:1.6}
-  .cta{padding:12px 28px;font-size:0.95rem}
-  .big-timer{padding:24px;margin-bottom:120px}
+  .cta{padding:12px 28px;font-size:0.95rem;background:linear-gradient(90deg,#ff1f1f,#8b0000);box-shadow:0 10px 30px rgba(255,31,31,.35)}
+  .cta:hover{transform:scale(1.05)}
+  .big-timer{padding:24px;margin-bottom:140px;box-shadow:0 20px 60px rgba(139,0,0,.45)}
   .big-timer h3{font-size:1.4rem}
   .big-timer span{font-size:2rem}
   .big-timer .disclaimer{font-size:0.9rem}
-  .plans-title{font-size:2rem;margin-bottom:30px}
   .menu{gap:20px;padding:0 12px}
-  .plan{padding:24px 16px}
+  .plan{padding:24px 16px;box-shadow:0 20px 50px rgba(255,31,31,.35);background:#1c1c1c}
+  .plan:hover{transform:scale(1.05);box-shadow:0 28px 65px rgba(255,31,31,.45)}
   .plan .price{font-size:1.4rem}
-  .plan .old-price{font-size:0.9rem}
+  .plan .old-price{font-size:0.9rem;color:#a1a1a1}
+  .highlight::after{font-size:0.8rem;padding:4px 8px;top:-10px;right:-10px}
   .installment-msg{font-size:1rem;margin-top:15px}
-  .review{flex-direction:column;align-items:flex-start}
+  .review{flex-direction:row;align-items:center;gap:12px;background:#1c1c1c;padding:14px 16px;box-shadow:0 10px 30px rgba(255,31,31,.25)}
+  .review .user-icon{width:36px;height:36px;font-size:0.9rem}
+  .review div{font-size:0.95rem;color:#e5e5e5}
 }
 </style>
 </head>
@@ -293,18 +297,19 @@ const reviews=[
   'Daniela M*****<br>★★★★☆<br>Alguns canais atrasam, mas vale a pena.',
   'Eduardo F*****<br>★★★★★<br>Streamings integrados e fluidez impressionante.',
   'Fernanda G*****<br>★★★★★<br>Sem travamentos, imagem 4K incrível.',
-  'João V*****<br>★★★★☆<br>Boa variedade de apps, funcionando ótimo.',
-  'Patrícia H*****<br>★★★★★<br>Vale cada centavo, melhor custo-benefício.',
-  'Rafael L*****<br>★★★★☆<br>Ótimo suporte e estabilidade.',
-  'Sofia T*****<br>★★★★★<br>Todos os serviços de streaming em um só lugar.'
+  'João V*****<br>★★★★☆<br>Ótimo custo-benefício.',
+  'Karina L*****<br>★★★★★<br>Assisto séries e filmes todos os dias, recomendo!',
+  'Lucas P*****<br>★★★★☆<br>Funciona muito melhor que outros IPTV.',
+  'Mariana A*****<br>★★★★★<br>Não troco por nada, super confiável.'
 ];
-const rEl=document.getElementById('reviews');
-reviews.sort(()=>0.5-Math.random()).slice(0,10).forEach(r=>{
-  const d=document.createElement('div');
-  d.className='review';
-  const initials=r.match(/\b\w/g).slice(0,2).join('').toUpperCase(); // pega duas primeiras letras do nome
-  d.innerHTML=`<span class="user-icon">${initials}</span><div>${r}</div>`;
-  rEl.appendChild(d);
+const reviewContainer=document.getElementById('reviews');
+reviews.sort(()=>0.5-Math.random()).forEach(r=>{
+  const div=document.createElement('div');div.className='review';
+  const initials=document.createElement('div');initials.className='user-icon';
+  initials.textContent=r.trim().charAt(0)+r.trim().split(' ')[1].charAt(0);
+  const text=document.createElement('div');text.innerHTML=r;
+  div.appendChild(initials);div.appendChild(text);
+  reviewContainer.appendChild(div);
 });
 </script>
 </body>
