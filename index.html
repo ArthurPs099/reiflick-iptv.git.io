@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ReiFlick | IPTV Premium</title>
-
-<!-- Ícone funcional -->
 <link rel="icon" type="image/png" href="icon.png">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
@@ -101,7 +98,9 @@ h1,h2{font-family:'Montserrat',sans-serif;color:#ff1f1f}
 .stars{color:#f59e0b}
 .reviews{display:grid;gap:18px}
 .review{background:#1a1a1a;padding:18px 20px;border-radius:22px;box-shadow:0 18px 40px rgba(0,0,0,.12);display:flex;gap:12px;align-items:flex-start}
-.review .user-icon{font-size:2rem;color:#ff1f1f;flex-shrink:0}
+.review .user-icon{
+  width:40px;height:40px;border-radius:50%;background:#ff1f1f;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0
+}
 
 /* Mobile */
 @media(max-width:768px){
@@ -147,7 +146,7 @@ h1,h2{font-family:'Montserrat',sans-serif;color:#ff1f1f}
   <div class="media"><img src="images/reiflick-android.png" alt="ReiFlick Android"></div>
   <div class="text">
     <h2>Assista onde quiser, sem limites</h2>
-    <p>Compatível com Smart TVs e dispositivos Android. Fácil instalação e acesso imediato.</p>
+    <p>Compatível apenas com Smart TVs e dispositivos Android.</p>
     <p>Todos os conteúdos disponíveis em qualquer hora, de forma segura e rápida.</p>
     <a href="#planos" class="cta">Ver Planos</a>
   </div>
@@ -205,19 +204,18 @@ const promo=document.getElementById('promo');
 const PROMO=15*60*1000;
 const COOLDOWN=10*60*60*1000;
 
-function formatTime(ms,showHours){
+function formatTime(ms,isPromo){
   const totalSec=Math.floor(ms/1000);
   const h=Math.floor(totalSec/3600);
   const m=Math.floor((totalSec%3600)/60);
   const s=totalSec%60;
-  return showHours?`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`:`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  return isPromo?`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`:`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
 function updateDisplay(end,isPromo){
   const remaining=end-Date.now();
-  const showHours=!isPromo; 
-  timerTop.textContent=formatTime(Math.max(remaining,0),showHours);
-  timerPlans.textContent=formatTime(Math.max(remaining,0),showHours);
+  timerTop.textContent=formatTime(Math.max(remaining,0),isPromo);
+  timerPlans.textContent=formatTime(Math.max(remaining,0),isPromo);
 }
 
 function startCountdown(end,isPromo){
@@ -287,7 +285,7 @@ document.querySelectorAll('.section').forEach(sec=>{
   },{threshold:0.25}).observe(sec);
 });
 
-// Avaliações com ícones
+// Avaliações com iniciais
 const reviews=[
   'Ana P*****<br>★★★★★<br>Melhor IPTV que já usei, qualidade perfeita!',
   'Bruno S*****<br>★★★★☆<br>Funciona muito bem na Smart TV e Android.',
@@ -304,7 +302,8 @@ const rEl=document.getElementById('reviews');
 reviews.sort(()=>0.5-Math.random()).slice(0,10).forEach(r=>{
   const d=document.createElement('div');
   d.className='review';
-  d.innerHTML=`<span class="user-icon">👤</span><div>${r}</div>`;
+  const initials=r.match(/\b\w/g).slice(0,2).join('').toUpperCase(); // pega duas primeiras letras do nome
+  d.innerHTML=`<span class="user-icon">${initials}</span><div>${r}</div>`;
   rEl.appendChild(d);
 });
 </script>
