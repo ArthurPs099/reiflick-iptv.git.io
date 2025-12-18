@@ -187,38 +187,37 @@ h1,h2{font-family:'Montserrat',sans-serif;color:#ff1f1f}
 <audio id="tickSound" preload="auto"><source src="tick.mp3" type="audio/mpeg"></audio>
 
 <script>
-// === TIMER ===
+// === TIMER CORRIGIDO ===
 const tick=document.getElementById('tickSound');
 const timerTop=document.getElementById('timerTop');
 const timerPlans=document.getElementById('timerPlans');
 const promoText=document.getElementById('promoText');
 const bigTimerCopy=document.getElementById('bigTimerCopy');
-const bigTimer=document.getElementById('bigTimer');
 const promo=document.getElementById('promo');
 
-const PROMO=15*60*1000; // 15 minutos
-const COOLDOWN=10*60*60*1000; // 10 horas
+const PROMO=15*60*1000; // 15 min
+const COOLDOWN=10*60*60*1000; // 10h
 
 function formatTime(ms,showHours){
   const totalSec=Math.floor(ms/1000);
   const h=Math.floor(totalSec/3600);
-  const m=Math.floor(totalSec%3600/60);
+  const m=Math.floor((totalSec%3600)/60);
   const s=totalSec%60;
   return showHours?`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`:`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
-function updateTimer(end,isPromo){
-  const rem=end-Date.now();
-  const showHours=!isPromo;
-  timerTop.textContent=formatTime(rem,showHours);
-  timerPlans.textContent=formatTime(rem,showHours);
+function updateDisplay(end,isPromo){
+  const remaining=end-Date.now();
+  const showHours=!isPromo; // mostrar HH:MM:SS no cooldown
+  timerTop.textContent=formatTime(Math.max(remaining,0),showHours);
+  timerPlans.textContent=formatTime(Math.max(remaining,0),showHours);
 }
 
-function startTimer(end,isPromo){
-  updateTimer(end,isPromo);
+function startCountdown(end,isPromo){
+  updateDisplay(end,isPromo);
   const interval=setInterval(()=>{
-    const rem=end-Date.now();
-    if(rem<=0){
+    const remaining=end-Date.now();
+    if(remaining<=0){
       clearInterval(interval);
       if(isPromo){
         promoText.textContent="PROMOÇÃO ENCERRADA ";
@@ -226,23 +225,23 @@ function startTimer(end,isPromo){
         const cooldownEnd=Date.now()+COOLDOWN;
         localStorage.setItem('timerEnd',cooldownEnd);
         localStorage.setItem('isPromo','false');
-        startTimer(cooldownEnd,false);
-      }else{
+        startCountdown(cooldownEnd,false);
+      } else {
         promoText.textContent="PROMOÇÃO RELÂMPAGO · 10% DE DESCONTO ";
         bigTimerCopy.textContent="Oferta especial disponível por:";
         const promoEnd=Date.now()+PROMO;
         localStorage.setItem('timerEnd',promoEnd);
         localStorage.setItem('isPromo','true');
-        startTimer(promoEnd,true);
+        startCountdown(promoEnd,true);
       }
       return;
     }
-    updateTimer(end,isPromo);
+    updateDisplay(end,isPromo);
     tick.volume=0.12; tick.currentTime=0; tick.play().catch(()=>{});
   },1000);
 }
 
-// Inicialização persistente
+// Persistência local
 let storedEnd=localStorage.getItem('timerEnd');
 let storedPromo=localStorage.getItem('isPromo');
 let endTime,isPromo;
@@ -268,12 +267,12 @@ if(storedEnd && storedPromo){
 }
 localStorage.setItem('timerEnd',endTime);
 localStorage.setItem('isPromo',isPromo);
-startTimer(endTime,isPromo);
+startCountdown(endTime,isPromo);
 
-// Fade topo ao scroll
+// Topo some ao scroll
 new IntersectionObserver(entries=>{
   entries.forEach(e=>{promo.classList.toggle('hidden', e.isIntersecting);});
-},{threshold:0}).observe(bigTimer);
+},{threshold:0}).observe(document.getElementById('bigTimer'));
 
 // Seções animadas
 document.querySelectorAll('.section').forEach(sec=>{
@@ -284,19 +283,19 @@ document.querySelectorAll('.section').forEach(sec=>{
 
 // Avaliações
 const reviews=[
-  'Ana P*****<br>★★★★★<br>Melhor IPTV que já usei. Qualidade impecável!',
-  'Carlos M*****<br>★★★★☆<br>Funciona muito bem, mas alguns canais demoram a carregar.',
-  'Bruna R*****<br>★★★★★<br>Todos os serviços de streaming em um só lugar. Amo!',
-  'Lucas T*****<br>★★★★★<br>Excelente custo-benefício. Recomendo!',
-  'Marina S*****<br>★★★★☆<br>Assinatura estável e rápida.',
-  'Eduardo F*****<br>★★★★★<br>Instalação fácil, qualidade 4K impressionante!',
-  'Fernanda G*****<br>★★★★★<br>Sem travamentos, conteúdo variado.',
-  'João V*****<br>★★★★☆<br>Alguns apps não aparecem, mas funciona bem.',
-  'Patrícia H*****<br>★★★★★<br>Vale cada centavo. Streaming perfeito!',
-  'Rafael L*****<br>★★★★☆<br>Bom serviço, atendimento rápido.'
+  'Ana P*****<br>★★★★★<br>Melhor IPTV que já usei, qualidade perfeita!',
+  'Bruno S*****<br>★★★★☆<br>Funciona muito bem na Smart TV e Android.',
+  'Carlos V*****<br>★★★★★<br>Instalação rápida e conteúdo variado.',
+  'Daniela M*****<br>★★★★☆<br>Alguns canais atrasam, mas vale a pena.',
+  'Eduardo F*****<br>★★★★★<br>Streamings integrados e fluidez impressionante.',
+  'Fernanda G*****<br>★★★★★<br>Sem travamentos, imagem 4K incrível.',
+  'João V*****<br>★★★★☆<br>Boa variedade de apps, funcionando ótimo.',
+  'Patrícia H*****<br>★★★★★<br>Vale cada centavo, melhor custo-benefício.',
+  'Rafael L*****<br>★★★★☆<br>Ótimo suporte e estabilidade.',
+  'Sofia T*****<br>★★★★★<br>Todos os serviços de streaming em um só lugar.'
 ];
 const rEl=document.getElementById('reviews');
-reviews.sort(()=>.5-Math.random()).slice(0,10).forEach(r=>{
+reviews.sort(()=>0.5-Math.random()).slice(0,10).forEach(r=>{
   const d=document.createElement('div');
   d.className='review';
   d.innerHTML=r;
